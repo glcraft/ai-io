@@ -1,7 +1,7 @@
 [package]
 name = "aio-cli"
 description = "Streamlined AI Terminal Interactions"
-version = "0.9.0"
+version = "0.10.0"
 edition = "2021"
 authors = ["Gabin Lefranc <gabin.lefranc@gmail.com>"]
 readme = "README.md"
