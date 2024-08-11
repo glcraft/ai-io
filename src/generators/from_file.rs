@@ -21,7 +21,7 @@ pub async fn run(_: crate::config::Config, args: args::FromContentArgs, input: &
             let bytes = res_into(r)?;
             String::from_utf8(bytes.as_ref().to_vec()).map_err(err_into)
         });
-        return Ok(Box::pin(stream));
+        Ok(Box::pin(stream))
     } else {
         let stream = ReaderStream::new(Cursor::new(String::from(input).into_bytes()))
             .map(res_into)
@@ -31,7 +31,6 @@ pub async fn run(_: crate::config::Config, args: args::FromContentArgs, input: &
                 )
                 
             );
-        return Ok(Box::pin(stream));
-        // todo!("Implement reading from stdin")
+        Ok(Box::pin(stream))
     }
 }

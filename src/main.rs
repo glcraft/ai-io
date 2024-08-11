@@ -16,7 +16,6 @@ use arguments as args;
 use clap::Parser;
 use formatters::Formatter;
 use log::{debug, info};
-use serde_io::DeserializeExt;
 use tokio_stream::StreamExt;
 
 macro_rules! raise_str {
@@ -26,13 +25,6 @@ macro_rules! raise_str {
     ($expr:expr, $text:literal) => {{
         $expr.map_err(|e| format!($text, e))?
     }};
-}
-
-fn get_creds(creds_path: &str) -> Result<credentials::Credentials, String> {
-    Ok(raise_str!(
-        credentials::Credentials::from_yaml_file(filesystem::resolve_path(creds_path).as_ref()),
-        "Failed to parse credentials file: {}"
-    ))
 }
 
 #[tokio::main]

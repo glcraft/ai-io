@@ -1,10 +1,5 @@
 use std::ops::{Deref, DerefMut};
 
-use llama_cpp::{
-    LlamaModel as Model,
-    Token
-};
-
 macro_rules! stop_manager {
     ($($x:expr),*) => {{
         let mut x = StopManager::new();
@@ -20,16 +15,12 @@ impl StopToken {
     pub fn new(text: String) -> Self {
         Self(text,)
     }
-    pub fn from_tokens(model: Model, tokens: &[Token]) -> Self {
-        Self(model.decode_tokens(tokens),)
-    }
-    pub fn inspect(&self) -> StopTokenInspector {
-        StopTokenInspector::new(self)
+    pub fn inspect_from(&self, index: usize) -> StopTokenInspector {
+        StopTokenInspector { index: index.into(), stop: self }
     }
 }
 
-enum StopTokenState {
-    NotFound,
+pub enum StopTokenState {
     InProgress,
     Found,
 }
@@ -93,15 +84,6 @@ pub struct StopTokenInspector<'a, 'b> {
 }
 
 impl<'a, 'b> StopTokenInspector<'a, 'b> {
-    pub fn new(stop: &'a StopToken) -> Self {
-        Self {
-            stop,
-            index: 0.into(),
-        }
-    }
-    pub fn reset(&mut self) {
-        self.index = 0.into();
-    }
     pub fn check(&mut self, text: &str) -> StopTokenState {
         for c_other in text.chars() {
             let c_self = self.stop.0.chars().nth(*self.index).unwrap();
@@ -132,18 +114,18 @@ impl StopManager {
         self.stops.push((stop, 0));
     }
     pub fn add_stop_from_string<S: Into<String>>(&mut self, stop: S) {
-        self.stops.push((StopToken::new(stop.into()), 0));
+        self.add_stop(StopToken::new(stop.into()));
     }
 
     pub fn check(&mut self, text: &str) -> bool {
         for (stop, index) in &mut self.stops {
-            let mut stop_inspector = StopTokenInspector { stop, index: index.into() };
+            let mut stop_inspector = stop.inspect_from(*index);// = StopTokenInspector { stop, index: index.into() };
             match stop_inspector.check(text) {
                 StopTokenState::Found => {
                     self.reset();
                     return true;
                 }
-                StopTokenState::InProgress | StopTokenState::NotFound => continue,
+                StopTokenState::InProgress => continue,
             }
         }
         false

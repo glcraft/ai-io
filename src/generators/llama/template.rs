@@ -26,6 +26,7 @@ pub enum PromptTemplate {
 }
 
 impl PromptTemplate {
+    #[allow(dead_code)]
     pub fn name(&self) -> &str {
         match self {
             PromptTemplate::ChatML => "chatml",

@@ -1,7 +1,9 @@
+#![allow(dead_code)]
+
 pub mod split_bytes;
 pub mod flatten_stream;
 
-pub use split_bytes::{SplitBytes, SplitBytesFactory};
+pub use split_bytes::SplitBytesFactory;
 pub use flatten_stream::FlattenTrait;
 
 macro_rules! hashmap {
