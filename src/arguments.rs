@@ -65,8 +65,8 @@ pub struct ApiArgs {
     /// Model name
     /// 
     /// The name of the model from /models API endpoint
-    #[arg(long, short, default_value = "gpt-4o-mini")]
-    pub model: String,
+    #[arg(long, short)]
+    pub model: Option<String>,
     /// Prompt name
     /// 
     /// The name of the prompt defined in the configuration file

@@ -179,12 +179,12 @@ impl ChatResponse {
     }
 }
 
-pub async fn run(api_key: Option<String>, config: crate::config::Config, args: args::ApiArgs, input: &str) -> ResultRun {
+pub async fn run(api_key: Option<String>, mut config: crate::config::Config, args: args::ApiArgs, input: &str) -> ResultRun {
     // if api_key.is_empty() {
     //     return Err(Error::Custom("OpenAI API key not found".into()));
     // }
     let endpoint = config.endpoints
-        .get(&args.endpoint)
+        .remove(&args.endpoint)
         .ok_or(Error::Custom(format!("Endpoint {} not found", args.endpoint).into()))?;
 
     let prompt = if let Some(config_prompt) = args.prompt {
@@ -196,14 +196,18 @@ pub async fn run(api_key: Option<String>, config: crate::config::Config, args: a
         Prompt::from_input(input)
     };
 
+    let Some(model) =  args.model.or(endpoint.default_model) else {
+        return Err(Error::Custom("Model not found".into()));
+    };
+
     // Send a request
-    let chat_request = ChatRequest::new(args.model)
+    let chat_request = ChatRequest::new(model)
         .add_messages(prompt.messages)
         .set_parameters(prompt.parameters.into())
         .into_stream();
 
     let client = reqwest::Client::new();
-    let mut stream = client.post(format!("{}/chat/completions", endpoint))
+    let mut stream = client.post(format!("{}/chat/completions", endpoint.url))
         .header("User-Agent", aio_cargo_info::user_agent!())
         .json(&chat_request);
     if let Some(api_key) = api_key {
