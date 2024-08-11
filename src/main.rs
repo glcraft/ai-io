@@ -15,7 +15,7 @@ mod openai {}
 use arguments as args;
 use clap::Parser;
 use formatters::Formatter;
-use serde_io::DeserializeExt;
+use log::{debug, info};
 use tokio_stream::StreamExt;
 
 macro_rules! raise_str {
@@ -25,13 +25,6 @@ macro_rules! raise_str {
     ($expr:expr, $text:literal) => {{
         $expr.map_err(|e| format!($text, e))?
     }};
-}
-
-fn get_creds(creds_path: &str) -> Result<credentials::Credentials, String> {
-    Ok(raise_str!(
-        credentials::Credentials::from_yaml_file(filesystem::resolve_path(creds_path).as_ref()),
-        "Failed to parse credentials file: {}"
-    ))
 }
 
 #[tokio::main]
@@ -66,16 +59,22 @@ async fn main() -> Result<(), String> {
         simplelog::ColorChoice::Auto,
     )
     .unwrap();
-
+    debug!("Arguments: {:#?}", app_args);
     let config =
         config::Config::from_yaml_file(filesystem::resolve_path(&app_args.config_path).as_ref())
+            .map(|mut c| {
+                c.insert_default_endpoints();
+                c
+            })
             .map_err(|e| {
                 format!(
                     "An error occured while loading or creating configuration file: {}",
                     e
                 )
             })?;
-
+    info!("Loaded config");
+    debug!("Config: {:#?}", config);
+    // std::process::exit(0);
     let mut formatter: Box<dyn Formatter> = match app_args.formatter {
         args::FormatterChoice::Markdown => Box::new(formatters::new_markdown_formatter()),
         args::FormatterChoice::Raw => Box::new(formatters::new_raw_formatter()),
@@ -84,7 +83,7 @@ async fn main() -> Result<(), String> {
 
     let mut stream = match app_args.engine {
         args::Subcommands::Api(args_engine) => generators::openai::run(
-            get_creds(&app_args.creds_path)?.openai,
+            credentials::Credentials::get_api_key(&app_args.creds_path, &args_engine.endpoint),
             config,
             args_engine,
             &app_args.input,

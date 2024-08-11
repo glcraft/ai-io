@@ -9,6 +9,7 @@ pub enum ParseError<RendererErr> {
     #[error("Renderer error: {0}")]
     RendererError(#[from] RendererErr),
 }
+type AnalyzerCallback<R> = fn(&mut Parser<R>, char) -> Result<(), ParseError<<R as Renderer>::Error>>;
 
 pub struct Parser<R: Renderer> {
     renderer: R,
@@ -16,7 +17,7 @@ pub struct Parser<R: Renderer> {
     current_token: String,
     previous_char: Option<char>,
     inline_style_tokens: Vec<token::InlineStyleToken>,
-    mode_func: fn(&mut Self, char) -> Result<(), ParseError<R::Error>>,
+    mode_func: AnalyzerCallback<R>,
 }
 
 impl<R: Renderer> Formatter for Parser<R> {

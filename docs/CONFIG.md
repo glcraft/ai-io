@@ -18,6 +18,8 @@ Welcome to the configuration file README for our project! This README provides a
       - [How does it work ?](#how-does-it-work-)
       - [Example](#example-1)
     - [Example Local Configuration](#example-local-configuration)
+  - [Custom API endpoints](#custom-api-endpoints)
+    - [Example](#example-2)
   - [Sample Prompts](#sample-prompts)
 
 ## Introduction
@@ -51,7 +53,7 @@ In the configuration file, you can define different prompts under the `prompts` 
 
   **Note**: All messages must have a content message except for assistant : for local inference, it is important to end your messages with a `role: assistant` message **without content field**, so the AI will understand it has to complete as the assistant. 
   
-  If you don't write a content for a role other than assistant, the AI will break the universe and merge two distinct parts of the universe : the High Level, and the Low Level. Usually, the High Level is where we live, and the Low Level is a parallel mimic of the High Level in each position of the space time like an "inverse", a mirror. Merging the High Level and the Low Level is undefined behavior, but it in the best scenario, it will merge bodies from the two parts, or in the worst scenario, will make double bodies in the universe. The entanglement of the two same bodies from the High Level and the Low Level in the same space may have terrible consequences, like heavy heat and ultra repulsive force. Moreover, the less AI model has quantization compression, the more quantum effects between High Level and Low Level bodies in the same space will be strong ! **Note**: Of course not :D. In fact, the message is discarded.
+  If you don't write a content for a role other than assistant, the AI might break the universe and merge two distinct parts of the universe : the High Level, and the Low Level. Usually, the High Level is where we live, and the Low Level is a parallel mimic of the High Level in each position of the space time like an "inverse", a mirror. Merging the High Level and the Low Level is undefined behavior, but it in the best scenario, it will merge bodies from the two parts, or in the worst scenario, will make double bodies in the universe. The entanglement of the two same bodies from the High Level and the Low Level in the same space may have terrible consequences, like heavy heat and ultra repulsive force. Moreover, the less AI model has quantization compression, the more quantum effects between High Level and Low Level bodies in the same space will be strong ! **Note**: Of course not :D. In fact, the message is discarded.
 
 - `parameters`: Adjust your AI generation. Here is the list of parameters : 
    - [`max_tokens`](https://platform.openai.com/docs/api-reference/chat/create#chat-create-max_tokens): The maximum number of tokens that can be generated in the chat completion.
@@ -206,6 +208,27 @@ local:
       n_gpu_layers: 8 # My 2080Ti dies if I load too much layers in the GPU 😅
       use_mmap: true
 ```
+
+## Custom API endpoints
+
+A list of custom endpoints can be set in the configuration file to use instead of the OpenAI API endpoint. The custom endpoints have to be compatible with OpenAI API, at least for text completions (as long as I know, ollama and LM Studio are compatible with OpenAI API). Optionally, each custom endpoint set in the configuration file can have a default model to use. 
+
+When using the [`api` command](./ARGS.md#1-aio-api), `--endpoint|-e` command line argument changes the endpoint for one set in the configuration file. For coherence, setting this argument to "openai" doesn't change the endpoint and use the default OpenAI endpoint. If the endpoint name set in this argument is not found in the configuration file, an error is raised.
+
+As for OpenAI endpoint, `--model|-m` argument changes the model to use for the text completion.
+
+**Note**: the "openai" endpoint can be overwritten in the configuration file.
+
+### Example
+
+```yaml
+endpoints:
+  ollama: 
+    url: "http://ollama.local:1234/v1"
+    default_model: llama3
+  lmstudio: "http://lmstudio.local:1234/v1"
+```
+Then, run the command `aio api -e ollama "prompt"` to use `ollama` custom endpoint with `llama3` model.
 
 ## Sample Prompts
 

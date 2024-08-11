@@ -5,7 +5,7 @@ pub mod stop;
 use tokio_stream::StreamExt;
 
 use llama_cpp::{
-    standard_sampler::StandardSampler, LlamaModel, LlamaParams, SessionParams, TokensToStrings
+    standard_sampler::StandardSampler, LlamaModel, SessionParams, TokensToStrings
 };
 use once_cell::sync::OnceCell;
 use log::{debug, info};

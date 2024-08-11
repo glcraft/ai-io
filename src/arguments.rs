@@ -57,11 +57,16 @@ pub enum Subcommands {
 /// OpenAI API arguments
 #[derive(ClapArgs, Debug, Clone)]
 pub struct ApiArgs {
+    /// API endpoint name
+    /// 
+    /// The name of the endpoint specified in the configuration file
+    #[arg(long, short, default_value = "openai")]
+    pub endpoint: String,
     /// Model name
     /// 
     /// The name of the model from /models API endpoint
-    #[arg(long, short, default_value = "gpt-3.5-turbo")]
-    pub model: String,
+    #[arg(long, short)]
+    pub model: Option<String>,
     /// Prompt name
     /// 
     /// The name of the prompt defined in the configuration file

@@ -1,5 +1,4 @@
 use tokio_stream::Stream;
-use std::pin::Pin;
 
 pub trait FlattenTrait: Stream
 {

@@ -3,4 +3,4 @@ mod parser;
 mod renderer;
 
 pub use parser::Parser;
-pub use renderer::{Renderer, TerminalRenderer};
+pub use renderer::TerminalRenderer;
