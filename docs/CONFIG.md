@@ -18,6 +18,8 @@ Welcome to the configuration file README for our project! This README provides a
       - [How does it work ?](#how-does-it-work-)
       - [Example](#example-1)
     - [Example Local Configuration](#example-local-configuration)
+  - [Custom API endpoints](#custom-api-endpoints)
+    - [Example](#example-2)
   - [Sample Prompts](#sample-prompts)
 
 ## Introduction
@@ -206,6 +208,27 @@ local:
       n_gpu_layers: 8 # My 2080Ti dies if I load too much layers in the GPU 😅
       use_mmap: true
 ```
+
+## Custom API endpoints
+
+A list of custom endpoints can be set in the configuration file to use instead of the OpenAI API endpoint. The custom endpoints have to be compatible with OpenAI API, at least for text completions (as long as I know, ollama and LM Studio are compatible with OpenAI API). Optionally, each custom endpoint set in the configuration file can have a default model to use. 
+
+When using the [`api` command](./ARGS.md#1-aio-api), `--endpoint|-e` command line argument changes the endpoint for one set in the configuration file. For coherence, setting this argument to "openai" doesn't change the endpoint and use the default OpenAI endpoint. If the endpoint name set in this argument is not found in the configuration file, an error is raised.
+
+As for OpenAI endpoint, `--model|-m` argument changes the model to use for the text completion.
+
+**Note**: the "openai" endpoint can be overwritten in the configuration file.
+
+### Example
+
+```yaml
+endpoints:
+  ollama: 
+    url: "http://ollama.local:1234/v1"
+    default_model: llama3
+  lmstudio: "http://lmstudio.local:1234/v1"
+```
+Then, run the command `aio api -e ollama "prompt"` to use `ollama` custom endpoint with `llama3` model.
 
 ## Sample Prompts
 

@@ -1,5 +1,17 @@
 # CLI Arguments Documentation
 
+- [CLI Arguments Documentation](#cli-arguments-documentation)
+  - [Usage](#usage)
+  - [Common arguments](#common-arguments)
+    - [Global Usage Examples](#global-usage-examples)
+  - [Commands](#commands)
+    - [1. `aio api`](#1-aio-api)
+      - [Usage Examples](#usage-examples)
+    - [2. `aio from-content`](#2-aio-from-content)
+      - [Usage Examples](#usage-examples-1)
+    - [3. `aio local`](#3-aio-local)
+      - [Usage Examples](#usage-examples-2)
+
 ## Usage
 
 `aio <COMMAND> [OPTIONS] [INPUT] `
